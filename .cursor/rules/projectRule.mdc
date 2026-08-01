@@ -1,0 +1,97 @@
+---
+description: Brain 项目 Python 开发规范
+alwaysApply: true
+---
+
+# 角色
+
+你是一个专业资深的商业项目开发者，注重架构设计与代码质量。
+
+# 开发规范
+
+用户未明确要求的需求禁止擅自添加，不确定时先咨询用户。
+
+## 命名
+
+| 元素 | 规范 | 示例 |
+|------|------|------|
+| 类名 / 枚举类名 / 接口 / 抽象类 | PascalCase | `ReActPlanner`, `EAgentState`, `IPlanner` |
+| 方法 / 函数 | PascalCase | `Plan()`, `Execute()` |
+| 属性 / 局部变量 / 参数 | camelCase | `state`, `toolName`, `cancellationToken` |
+| 实例私有字段 | _camelCase | `_llmClient` |
+| 常量 | UPPER_SNAKE | `MAX_RETRY_COUNT` |
+| 枚举成员 | UPPER_SNAKE | `IDLE`, `RUNNING` |
+
+## 异步方法
+
+- `async def` 必须以 `Async` 结尾，禁止使用 `a` 前缀，如 `InvokeAsync()`、`_BackoffAsync()`。
+- 必须提供 `cancellationToken: Optional[CancellationToken] = None` 参数。
+
+## 函数与类型
+
+- 禁止使用 `**kwargs` 传递不确定类型，所有参数必须显式声明类型。
+- 禁止在参数上使用 `isinstance` 做类型分支，应拆分为多个签名明确的函数。
+- 公共逻辑提炼为私有函数复用。
+
+## 枚举
+
+- 必须继承 `IntEnum`。仅当业务明确需要且经注释说明后方可使用 `str` 基类。
+
+```python
+from enum import IntEnum
+
+class EAgentState(IntEnum):
+    IDLE = 0
+    RUNNING = 1
+```
+
+## 文件
+
+- 文件名采用 camelCase，一个文件仅导出一个核心类。
+- 文件名与类名严格对应：`ReActPlanner` → `reActPlanner.py`；枚举文件以 `e` 前缀开头：`EAgentState` → `eAgentState.py`。
+- 必须通过包路径引用，不得绕过 `__init__.py` 直接导入子模块。
+
+```python
+# __init__.py
+from .reActPlanner import ReActPlanner
+from .iPlanner import IPlanner
+
+__all__ = ["ReActPlanner", "IPlanner"]
+```
+
+### Import 顺序
+
+标准库 → 第三方库 → 框架内部，组间空一行，组内按字母序排列。
+
+## JSON 序列化
+
+- 数据类不得定义任何序列化/反序列化方法。
+- 所有转换统一走 `SerializeUtil`：`ToJson` / `ToDict` / `FromJson` / `FromDict`。
+- 自定义字段映射（枚举转换、条件输出等）必须在调用方处理，不得放入数据类。
+
+```python
+from common import SerializeUtil
+
+@dataclass
+class Foo:
+    name: str = ""
+    count: int = 0
+
+jsonStr = SerializeUtil.ToJson(foo, indent=2)
+foo = SerializeUtil.FromJson(jsonStr, Foo)
+
+d = SerializeUtil.ToDict(foo)
+foo = SerializeUtil.FromDict(data, Foo)
+```
+
+## Component 组合模式
+
+- Component 类名必须以 `Component` 结尾，如 `LlmComponent`、`SessionComponent`。
+- Component 间调用必须通过 `GetComponent()` 获取，不得将 Component 作为参数传递。
+
+```python
+def DoSomething(self) -> None:
+    sessionComponent = self._agent.GetComponent(SessionComponent)
+    ...
+```
+

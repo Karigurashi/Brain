@@ -1,0 +1,11 @@
+# Factor Lab — 核心依赖
+numpy>=1.21.0
+pandas>=1.3.0
+scipy>=1.7.0
+scikit-learn>=1.0.0
+
+# 遗传编程引擎 (GPFactorMiner 需要)
+deap>=1.4.0
+
+# 可选: 聚宽环境 (仅在聚宽研究平台需要)
+# jqdata>=1.0.0

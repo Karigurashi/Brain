@@ -1,0 +1,57 @@
+{
+  "nodeCount": 2,
+  "round": 2,
+  "events": [
+    {
+      "type": 0,
+      "nodeId": 0,
+      "agentId": 0,
+      "message": "",
+      "status": null
+    },
+    {
+      "type": 3,
+      "nodeId": 1,
+      "agentId": 0,
+      "message": "",
+      "status": 0
+    },
+    {
+      "type": 3,
+      "nodeId": 1,
+      "agentId": 0,
+      "message": "",
+      "status": 1
+    },
+    {
+      "type": 3,
+      "nodeId": 2,
+      "agentId": 0,
+      "message": "",
+      "status": 0
+    },
+    {
+      "type": 4,
+      "nodeId": 2,
+      "agentId": 0,
+      "message": "Flow测试成功！",
+      "status": null
+    },
+    {
+      "type": 3,
+      "nodeId": 2,
+      "agentId": 0,
+      "message": "",
+      "status": 1
+    },
+    {
+      "type": 1,
+      "nodeId": 0,
+      "agentId": 0,
+      "message": "Flow测试成功！\ntokens: in17 out20",
+      "status": null
+    }
+  ],
+  "result": "Flow测试成功！\ntokens: in17 out20",
+  "isSuccess": true
+}
